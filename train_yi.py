@@ -1,5 +1,5 @@
 import random
-from core.supervised_dataset import (
+from core.supervised_dataset_yi import (
     DEFAULT_PAD_TOKEN,
     DEFAULT_EOS_TOKEN,
     DEFAULT_UNK_TOKEN,
@@ -336,8 +336,8 @@ if __name__ == "__main__":
     model = FSDP(model, **fsdp_config)
     optimizer = get_optimizer(model, lr, weight_decay)
 
-    train_ds = ["data/train.jsonl"]
-    val_ds = ["data/validation.jsonl"]
+    train_ds = ["data/output_pages_regs_yi.json"]
+    val_ds = ["data/output_pages_regs_yi.json"]
     train_dataset = SupervisedDataset(train_on_inputs, tokenizer, train_ds)
     val_dataset = SupervisedDataset(train_on_inputs, tokenizer, val_ds)
     collator = DataCollatorForSupervisedDataset(tokenizer)
