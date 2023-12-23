@@ -305,7 +305,7 @@ if __name__ == "__main__":
     lr = 2e-05  # adjust as needed
     weight_decay = 0.0  # adjust as needed
     gradient_clipping = 1.0  # adjust as needed
-    train_on_inputs = False  # whether to train on instruction tokens
+    train_on_inputs = True  # whether to train on instruction tokens
     use_multipack_sampler = (
         True  # whether to use the multipack sampler or torch sampler
     )
