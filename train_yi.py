@@ -330,7 +330,7 @@ if __name__ == "__main__":
         ),
         backward_prefetch=None,
         param_init_fn=None,
-        cpu_offload=CPUOffload(offload_params=True)),
+        cpu_offload=CPUOffload(offload_params=True),
     )
 
     model = FSDP(model, **fsdp_config)
