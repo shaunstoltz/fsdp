@@ -18,6 +18,7 @@ from torch.distributed.fsdp import (
 )
 from torch.distributed.fsdp.fully_sharded_data_parallel import (
     ShardingStrategy,
+    CPUOffload
 )
 from torch.distributed.fsdp.wrap import (
     transformer_auto_wrap_policy,
@@ -329,7 +330,7 @@ if __name__ == "__main__":
         ),
         backward_prefetch=None,
         param_init_fn=None,
-        cpu_offload=None,
+        cpu_offload=CPUOffload(offload_params=True)),
     )
 
     model = FSDP(model, **fsdp_config)
