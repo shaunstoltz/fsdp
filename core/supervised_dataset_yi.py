@@ -95,8 +95,8 @@ def filter_long_samples(
     samples: Sequence[str],
     tokenizer: transformers.PreTrainedTokenizer,
 ) -> Dict:
-    sources = [f"{fmt_prompt(question)}" for question in samples["instruction"]]
-    targets = [f"{answer}{tokenizer.eos_token}" for answer in samples["output"]]
+    sources = [f"{fmt_prompt(question)}" for question in samples["text"]]
+    targets = [f"{answer}{tokenizer.eos_token}" for answer in samples["text"]]
     examples = [s + t for s, t in zip(sources, targets)]
 
     return _filter_tokenize_fn(examples, tokenizer)
