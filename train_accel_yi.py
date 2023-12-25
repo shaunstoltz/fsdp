@@ -14,6 +14,54 @@ from torch.distributed.fsdp.wrap import (
 
 from transformers.models.llama.modeling_llama import LlamaDecoderLayer
 
+
+from peft import prepare_model_for_kbit_training, LoraConfig, get_peft_model
+
+def print_trainable_parameters(model):
+    """
+    Prints the number of trainable parameters in the model.
+    """
+    trainable_params = 0
+    all_param = 0
+    for _, param in model.named_parameters():
+        all_param += param.numel()
+        if param.requires_grad:
+            trainable_params += param.numel()
+    print(
+        f"trainable params: {trainable_params} || all params: {all_param} || trainable%: {100 * trainable_params / all_param}"
+    )
+
+
+
+
+
+
+config = LoraConfig(
+    r=8,
+    lora_alpha=16,
+    target_modules=[
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "w1",
+        "w2",
+        "w3",
+        "lm_head",
+    ],
+    bias="none",
+    lora_dropout=0.05,  # Conventional
+    task_type="CAUSAL_LM",
+)
+
+
+
+
+
+
+
+
+
 auto_wrap_policy = functools.partial(
     transformer_auto_wrap_policy,
     transformer_layer_cls={
@@ -45,6 +93,22 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, DataCollatorForLan
 base_model_id = "01-ai/Yi-6B"
 
 model = AutoModelForCausalLM.from_pretrained(base_model_id, device_map="auto")
+
+model.gradient_checkpointing_enable()
+model = prepare_model_for_kbit_training(model)
+
+print(model)
+
+
+model = get_peft_model(model, config)
+print_trainable_parameters(model)
+
+
+
+
+
+
+
 
 tokenizer = AutoTokenizer.from_pretrained(
     base_model_id,
