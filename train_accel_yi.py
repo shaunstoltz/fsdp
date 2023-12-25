@@ -5,7 +5,7 @@ from datasets import load_from_disk
 from datetime import datetime
 
 from accelerate import FullyShardedDataParallelPlugin, Accelerator
-from torch.distributed.fsdp.fully_sharded_data_parallel import FullOptimStateDictConfig, FullStateDictConfig, ShardingStrategy, CPUOffload
+from torch.distributed.fsdp.fully_sharded_data_parallel import FullOptimStateDictConfig, FullStateDictConfig, ShardingStrategy, CPUOffload, MixedPrecision
 
 from torch.distributed.fsdp.wrap import (
     transformer_auto_wrap_policy,
@@ -25,6 +25,13 @@ fsdp_plugin = FullyShardedDataParallelPlugin(
     auto_wrap_policy=auto_wrap_policy,
     sharding_strategy=ShardingStrategy.FULL_SHARD,
     cpu_offload=CPUOffload(offload_params=True),
+            mixed_precision=MixedPrecision(
+            param_dtype=torch.bfloat16,
+            reduce_dtype=torch.bfloat16,
+            buffer_dtype=torch.bfloat16,
+        ),
+    backward_prefetch=None,
+    param_init_fn=None,
     #state_dict_config=FullStateDictConfig(offload_to_cpu=True, rank0_only=False),
     #optim_state_dict_config=FullOptimStateDictConfig(offload_to_cpu=True, rank0_only=False),
 )
