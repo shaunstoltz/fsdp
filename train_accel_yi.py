@@ -1,5 +1,6 @@
 import transformers
 import functools
+import torch
 from datasets import load_from_disk
 
 from datetime import datetime
