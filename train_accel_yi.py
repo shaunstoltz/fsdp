@@ -1,10 +1,25 @@
 import transformers
+import functools
 from datasets import load_from_disk
 
 from datetime import datetime
 
 from accelerate import FullyShardedDataParallelPlugin, Accelerator
 from torch.distributed.fsdp.fully_sharded_data_parallel import FullOptimStateDictConfig, FullStateDictConfig, ShardingStrategy, CPUOffload
+
+from torch.distributed.fsdp.wrap import (
+    transformer_auto_wrap_policy,
+)
+
+from transformers.models.llama.modeling_llama import LlamaDecoderLayer
+
+auto_wrap_policy = functools.partial(
+    transformer_auto_wrap_policy,
+    transformer_layer_cls={
+        LlamaDecoderLayer,
+    },
+)
+
 
 fsdp_plugin = FullyShardedDataParallelPlugin(
     sharding_strategy=ShardingStrategy.FULL_SHARD,
