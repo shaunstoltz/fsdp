@@ -4,14 +4,16 @@ from datasets import load_from_disk
 from datetime import datetime
 
 from accelerate import FullyShardedDataParallelPlugin, Accelerator
-from torch.distributed.fsdp.fully_sharded_data_parallel import FullOptimStateDictConfig, FullStateDictConfig
+from torch.distributed.fsdp.fully_sharded_data_parallel import FullOptimStateDictConfig, FullStateDictConfig, ShardingStrategy, CPUOffload
 
 fsdp_plugin = FullyShardedDataParallelPlugin(
-    state_dict_config=FullStateDictConfig(offload_to_cpu=True, rank0_only=False),
-    optim_state_dict_config=FullOptimStateDictConfig(offload_to_cpu=True, rank0_only=False),
+    sharding_strategy=ShardingStrategy.FULL_SHARD,
+    cpu_offload=CPUOffload(offload_params=True),
+    #state_dict_config=FullStateDictConfig(offload_to_cpu=True, rank0_only=False),
+    #optim_state_dict_config=FullOptimStateDictConfig(offload_to_cpu=True, rank0_only=False),
 )
 
-accelerator = Accelerator(fsdp_plugin=fsdp_plugin)
+accelerator = Accelerator(fsdp_plugin=fsdp_plugin)#
 
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, DataCollatorForLanguageModeling, BitsAndBytesConfig
@@ -54,7 +56,7 @@ trainer = transformers.Trainer(
         warmup_steps=5,
         per_device_train_batch_size=1,
         gradient_checkpointing=True,
-        gradient_accumulation_steps=4,
+        gradient_accumulation_steps=16,
         max_steps=1000,
         learning_rate=2.5e-5, 
         logging_steps=25,
