@@ -22,6 +22,7 @@ auto_wrap_policy = functools.partial(
 
 
 fsdp_plugin = FullyShardedDataParallelPlugin(
+    auto_wrap_policy=auto_wrap_policy,
     sharding_strategy=ShardingStrategy.FULL_SHARD,
     cpu_offload=CPUOffload(offload_params=True),
     #state_dict_config=FullStateDictConfig(offload_to_cpu=True, rank0_only=False),
