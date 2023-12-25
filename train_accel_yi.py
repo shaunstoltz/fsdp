@@ -26,11 +26,11 @@ fsdp_plugin = FullyShardedDataParallelPlugin(
     auto_wrap_policy=auto_wrap_policy,
     sharding_strategy=ShardingStrategy.FULL_SHARD,
     cpu_offload=CPUOffload(offload_params=True),
-            mixed_precision=MixedPrecision(
+    mixed_precision_policy=MixedPrecision(
             param_dtype=torch.bfloat16,
             reduce_dtype=torch.bfloat16,
             buffer_dtype=torch.bfloat16,
-        ),
+    ),
     backward_prefetch=None,
     param_init_fn=None,
     #state_dict_config=FullStateDictConfig(offload_to_cpu=True, rank0_only=False),
