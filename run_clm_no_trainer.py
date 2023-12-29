@@ -564,6 +564,7 @@ def main():
                 optimizer.zero_grad()
                 progress_bar.update(1)
                 completed_steps += 1
+                logger.info(f"epoch {epoch} step: {completed_steps} loss: {loss}")
 
             if isinstance(checkpointing_steps, int):
                 if completed_steps % checkpointing_steps == 0:
