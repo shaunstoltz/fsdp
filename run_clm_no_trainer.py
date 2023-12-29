@@ -568,17 +568,18 @@ def main():
 
             if isinstance(checkpointing_steps, int):
                 if completed_steps % checkpointing_steps == 0:
-                    model.eval()
+                    #model.eval()
                     output_dir = f"step_{completed_steps}"
                     if args.output_dir is not None:
                         output_dir = os.path.join(args.output_dir, output_dir)
                     #accelerator.save_state(output_dir)
+                    torch.cuda.empty_cache()
                     accelerator.wait_for_everyone()
                     unwrapped_model = accelerator.unwrap_model(model)
                     unwrapped_model.save_pretrained(args.output_dir, save_function=accelerator.save)
                     if accelerator.is_main_process:
                         tokenizer.save_pretrained(args.output_dir)
-                    model.train()
+                    #model.train()
             if completed_steps >= args.max_train_steps:
                 break
 
