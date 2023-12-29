@@ -239,7 +239,7 @@ def main():
 
     # Initialize the accelerator. We will let the accelerator handle device placement for us in this example.
     # If we're using tracking, we also need to initialize it here and it will pick up all supported trackers in the environment
-    accelerator = Accelerator(log_with="all", logging_dir=args.output_dir) if args.with_tracking else Accelerator()
+    accelerator = Accelerator(log_with="all") if args.with_tracking else Accelerator()
     # Make one log on every process with the configuration for debugging.
     logging.basicConfig(
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
@@ -571,7 +571,12 @@ def main():
                     output_dir = f"step_{completed_steps}"
                     if args.output_dir is not None:
                         output_dir = os.path.join(args.output_dir, output_dir)
-                    accelerator.save_state(output_dir)
+                    #accelerator.save_state(output_dir)
+                    accelerator.wait_for_everyone()
+                    unwrapped_model = accelerator.unwrap_model(model)
+                    unwrapped_model.save_pretrained(args.output_dir, save_function=accelerator.save)
+                    if accelerator.is_main_process:
+                        tokenizer.save_pretrained(args.output_dir)
             if completed_steps >= args.max_train_steps:
                 break
 
